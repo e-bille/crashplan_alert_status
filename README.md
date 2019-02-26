@@ -9,4 +9,4 @@ It will return one of the following statuses:
 * CriticalConnectionAlert: Device have not been in contact with Crashplan for the specified critical limit (Code42 setting)
 * WarningConnectionAlert: Device have not been in contact with Crashplan for the specified warning limit (Code42 setting
 
-**Please replace the place holders in for the variables below with your server details.**
+**Please replace the place holders for the variables with your server details.**

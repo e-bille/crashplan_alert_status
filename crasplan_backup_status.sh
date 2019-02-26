@@ -11,21 +11,29 @@
 # * OK: Everything is mighty fine!
 # * CriticalConnectionAlert: Device have not been in contact with Crashplan for the specified critical limit (Code42 setting)
 # * WarningConnectionAlert: Device have not been in contact with Crashplan for the specified warning limit (Code42 setting
+#
+# Please replace the place holders in for the variables below with your server details. 
 
 CP_ServerAddress="CRASHPLAN_SRV_URL"
 CP_ServerPort="CRASHPLAN_SRV_PORT"
 CP_AdminUsername="CRASHPLAN_API_ENABLED_ACCOUNT"
 CP_AdminPassword="CRASHPLAN_ACCOUNT PASSWD"
 
+# Check if .identity is in place. If not, then Crashplan is not installed
 if [ -f /Library/Application\ Support/CrashPlan/.identity ];then
+	# Get computer GUID from .identity for API-call later
 	GUID=`/bin/cat /Library/Application\ Support/CrashPlan/.identity | grep guid | sed s/guid\=//g`
+	# API-call to crashplan
 	response="<result>`/usr/bin/curl --silent -u "$CP_AdminUsername":"$CP_AdminPassword" -k https://"$CP_ServerAddress":"$CP_ServerPort"/api/computer/"$GUID"?idType=guid | grep -w alertStates | cut -d, -f 12 | cut -d'"' -f 4`</result>"
 
+	# Check API-response. If empty the the client is not configured or missconfigured
 	if [ ! $response = "<result></result>" ]; then
+		# API-reponse is not empty. Echo the respons for JAMF Pro to read. 
 		echo $response
 	else
 		echo "<result>InstalledNoConfig</result>"
 	fi
 else
+	# The .identy file is not found and hence Crashplan is not installed
 	echo "<result>NotInstalled</result>"
 fi
